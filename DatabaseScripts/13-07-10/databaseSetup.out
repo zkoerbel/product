@@ -1,0 +1,134 @@
+--------------
+CREATE TABLE users
+(
+	id BIGINT AUTO_INCREMENT PRIMARY KEY,
+	email VARCHAR(255),
+	password VARCHAR(32), 
+	first_name VARCHAR(255),
+	last_name VARCHAR(255),
+	creation_date DATETIME
+)
+--------------
+
+--------------
+CREATE TABLE permissions
+(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	description VARCHAR(255)
+)
+--------------
+
+--------------
+CREATE TABLE teams
+(
+	id BIGINT AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(255),
+	default_user_id BIGINT,
+	creation_date DATETIME,
+	end_date DATETIME,
+	FOREIGN KEY (default_user_id) REFERENCES users(id)
+)
+--------------
+
+--------------
+CREATE TABLE team_members
+(
+	team_id BIGINT,
+	user_id BIGINT,
+	add_date DATETIME,
+	remove_date DATETIME,
+	FOREIGN KEY (team_id) REFERENCES teams(id),
+	FOREIGN KEY (user_id) REFERENCES users(id)
+)
+--------------
+
+--------------
+CREATE TABLE user_permissions
+(
+	team_id BIGINT,
+	user_id BIGINT,
+	permissions_id INT,
+	add_date DATETIME,
+	remove_date DATETIME,
+	FOREIGN KEY (team_id) REFERENCES teams(id),
+	FOREIGN KEY (user_id) REFERENCES users(id),
+	FOREIGN KEY (permissions_id) REFERENCES permissions(id)
+)
+--------------
+
+--------------
+CREATE TABLE portfolio_cash_history
+(
+	id BIGINT AUTO_INCREMENT PRIMARY KEY,
+	date DATETIME,
+	team_id BIGINT,
+	user_id BIGINT,
+	amount BIGINT,
+	notes VARCHAR(255),
+	FOREIGN KEY (team_id) REFERENCES teams(id),
+	FOREIGN KEY (user_id) REFERENCES users(id)
+)
+--------------
+
+--------------
+CREATE TABLE actions
+(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	description varchar(255)
+)
+--------------
+
+--------------
+CREATE TABLE pitches
+(
+	id BIGINT AUTO_INCREMENT PRIMARY KEY,
+	date DATETIME,
+	user_id BIGINT,
+	ticker VARCHAR(7),
+	notes TEXT,
+	FOREIGN KEY (user_id) REFERENCES users(id)
+)
+--------------
+
+--------------
+CREATE TABLE pitch_teams
+(
+	pitch_id BIGINT,
+	team_id BIGINT,
+	FOREIGN KEY (pitch_id) REFERENCES pitches(id),
+	FOREIGN KEY (team_id) REFERENCES teams(id)
+)
+--------------
+
+--------------
+CREATE TABLE proposals
+(
+	id BIGINT AUTO_INCREMENT PRIMARY KEY,
+	date DATETIME,
+	pitch_id BIGINT,
+	team_id BIGINT,
+	user_id BIGINT,
+	ticker VARCHAR(7),
+	action_id INT,
+	notes TEXT,
+	FOREIGN KEY (pitch_id) REFERENCES pitches(id),
+	FOREIGN KEY (team_id) REFERENCES teams(id),
+	FOREIGN KEY (user_id) REFERENCES users(id),
+	FOREIGN KEY (action_id) REFERENCES actions(id)
+)
+--------------
+
+--------------
+CREATE TABLE orders
+(
+	id BIGINT AUTO_INCREMENT PRIMARY KEY,
+	proposal_id BIGINT,
+	order_date DATETIME,
+	execution_date DATETIME,
+	order_price DOUBLE,
+	execution_price DOUBLE,
+	shares BIGINT,
+	FOREIGN KEY (proposal_id) REFERENCES proposals(id)
+)
+--------------
+
